@@ -1,0 +1,44 @@
+.header
+{
+    height: 34vw;
+    background:url('/header_img.png') no-repeat;
+    margin: 30px auto;
+    background-size: contain;
+    position: relative;
+}
+.header-content 
+{
+    /* margin: 30px auto; */
+    width: 30vw;
+    position: relative;
+    left: 60px;
+    top: 20vh;
+    color: white; 
+   
+}
+.header-content h2
+{
+    font-size: 40px;
+    /* font-weight: 700; */
+    margin-bottom: 20px;
+}
+.header-content p
+{
+    font-size: 14px;
+}
+.header-content button
+{
+    background-color: white;
+    color: tomato;
+    border-radius: 40px;
+    border: 1px solid white;
+    font-size: 16px;
+    margin: 10px auto;
+    height: 30px;
+    width: 120px;
+}
+.header-content button:hover
+{
+    background-color: rgb(240, 119, 48);
+    color: white;
+}

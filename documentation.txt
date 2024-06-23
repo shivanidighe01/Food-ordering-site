@@ -1,0 +1,8 @@
+==> run project==> npm run dev
+
+1) create project folder
+2)create frontend folder using npm create vite@latest
+#frontend
+1) add dependancies
+2)install react-router-dom for routing
+
