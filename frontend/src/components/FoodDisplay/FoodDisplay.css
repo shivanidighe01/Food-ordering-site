@@ -1,17 +1,65 @@
-.food-display
-{
+.food-display {
     margin-top: 30px;
 }
-.food-display h2
-{
-    font-size: max(2vw,24px);
+
+.food-display h2 {
+    font-size: max(2vw, 24px);
     font-weight: 600;
 }
-.food-display-list
-{
+
+.food-display-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     margin-top: 30px;
     gap: 30px;
     row-gap: 50px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1050px) {
+    .food-display h2 {
+        font-size: max(2.5vw, 22px);
+    }
+
+    .food-display-list {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 25px;
+        row-gap: 45px;
+    }
+}
+
+@media (max-width: 900px) {
+    .food-display h2 {
+        font-size: max(3vw, 20px);
+    }
+
+    .food-display-list {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 20px;
+        row-gap: 40px;
+    }
+}
+
+@media (max-width: 750px) {
+    .food-display h2 {
+        font-size: max(3.5vw, 18px);
+    }
+
+    .food-display-list {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
+        row-gap: 35px;
+    }
+}
+
+@media (max-width: 600px) {
+    .food-display h2 {
+        font-size: max(4vw, 16px);
+    }
+
+    .food-display-list {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        row-gap: 30px;
+    }
 }

@@ -21,7 +21,7 @@ const StoreContextProvider=(props)=>
                         setCartItem((prev)=>({...prev,[itemId]:prev[itemId]+1}))
                     }
             }
-        const removeFromCart=([itemId])=>
+        const removeFromCart=(itemId)=>
             {
                 //if item is alredy present the update the count by -1 to decrease count
                         //eg.:-prev[itemId]=1
