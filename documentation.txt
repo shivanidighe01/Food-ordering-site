@@ -6,3 +6,15 @@
 1) add dependancies
 2)install react-router-dom for routing
 
+#backend
+express-node module
+mongoose-communicate with db
+jsonwebtoken-authentication
+bcrypt-hash the password
+cors-communicate between frontend and backend
+dotenv-use env variable in project
+body-parser-parse data coming from user
+multer-handle image data
+strip-payment gateway
+validator-validate email and password
+nodemon
