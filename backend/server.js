@@ -2,7 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import { connectDB } from './config/db.js'
 import foodRouter from './routes/foodRoute.js'
-
+import userRouter from './routes/userRoute.js'
+import 'dotenv/config.js'
 
 //app config
 const app=express()
@@ -21,7 +22,7 @@ app.use('/images',express.static('uploads'))
 app.get("/",(req,res)=>{
     res.send("api working")
 })
-
+app.use('/api/user',userRouter)
 //run express server
 app.listen(port,()=>{
     console.log(`server started on http://localhost:${port}`)
