@@ -1,70 +1,77 @@
-import { createContext, useEffect } from "react";
-import { food_list } from "../assets/assets";
-import { useState } from "react";
-export const StoreContext=createContext(null)
+import { createContext, useEffect, useState } from "react";
+import axios from "axios"; // Make sure to import axios if you're using it
 
-const StoreContextProvider=(props)=>
-    {
-        const [cartItem, setCartItem] = useState({});
-        const addToCart=(itemId)=>
-            {
-                if(!cartItem[itemId])
-                    {
-                        //if item is not present then it add item to cart ie {itemId:1}
-                        setCartItem((prev)=>({...prev,[itemId]:1}))
-                    }
-                else
-                    {
-                        //if item is alredy present the update the count
-                        //eg.:-prev[itemId]=1
-                        //      {itemId:2}  ie prev[itemId]+1
-                        setCartItem((prev)=>({...prev,[itemId]:prev[itemId]+1}))
-                    }
-            }
-        const removeFromCart=(itemId)=>
-            {
-                //if item is alredy present the update the count by -1 to decrease count
-                        //eg.:-prev[itemId]=1
-                        //      {itemId:0}  ie prev[itemId]-1
-                setCartItem((prev)=>({...prev,[itemId]:prev[itemId]-1}))
-            }
-        
-        const getTotalCartAmount=() =>
-        {
-            let totalAmount=0;
-            for(const item in cartItem)
-            {
-                if(cartItem[item]>0)
-                {
-                    let itemInfo=food_list.find((product)=>product._id===item);
-                    totalAmount+=itemInfo.price*cartItem[item];
-                }
-                
-            }
-            return totalAmount;
-        }
-        // useEffect(() => 
-        //     {
-        //         console.log(cartItem);
-        //     }, [cartItem])
-        
+export const StoreContext = createContext(null);
 
+const StoreContextProvider = (props) => {
+  const [cartItem, setCartItem] = useState({});
+  const [token, setToken] = useState("");
+  const [foodList, setFoodList] = useState([]);
 
-        const contextValue={
-            food_list,
-            cartItem,
-            setCartItem,
-            addToCart,
-            removeFromCart,
-            getTotalCartAmount
+  const url = "http://localhost:4000";
 
-        }
-        
-        return (
-            <StoreContext.Provider value={contextValue}>
-                {props.children}
-            </StoreContext.Provider>
-        )
+  const addToCart = (itemId) => {
+    if (!cartItem[itemId]) {
+      setCartItem((prev) => ({ ...prev, [itemId]: 1 }));
+    } else {
+      setCartItem((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
     }
+  };
+
+  const removeFromCart = (itemId) => {
+    setCartItem((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+  };
+
+  const getTotalCartAmount = () => {
+    let totalAmount = 0;
+    for (const item in cartItem) {
+      if (cartItem[item] > 0) {
+        let itemInfo = foodList.find((product) => product._id === item);
+        if (itemInfo) {
+          totalAmount += itemInfo.price * cartItem[item];
+        }
+      }
+    }
+    return totalAmount;
+  };
+
+  const fetchFoodList = async () => {
+    try {
+      const response = await axios.get(url + "/api/food/list");
+      setFoodList(response.data.data);
+    } catch (error) {
+      console.error("Error fetching food list:", error);
+    }
+  };
+
+  useEffect(() => {
+    async function loadData() {
+      await fetchFoodList();
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        setToken(storedToken);
+      }
+    }
+    loadData();
+  }, []);
+
+  const contextValue = {
+    foodList, // Include foodList in the context value
+    cartItem,
+    setCartItem,
+    addToCart,
+    removeFromCart,
+    getTotalCartAmount,
+    url,
+    token,
+    setToken,
+  };
+
+  return (
+    <StoreContext.Provider value={contextValue}>
+      {props.children}
+    </StoreContext.Provider>
+  );
+};
 
 export default StoreContextProvider;

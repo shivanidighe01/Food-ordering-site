@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate correctly
-import { StoreContext } from '../../context/StoreContext'; // No need to import StoreContextProvider here
+import { useNavigate } from 'react-router-dom';
+import { StoreContext } from '../../context/StoreContext';
 import './Cart.css';
 
 const Cart = () => {
-  const { cartItem, food_list, removeFromCart, getTotalCartAmount } = useContext(StoreContext);
-  const navigate = useNavigate(); // Correctly using useNavigate
-  
+  const { cartItem, foodList, removeFromCart, getTotalCartAmount, url } = useContext(StoreContext);
+  const navigate = useNavigate();
+
   return (
     <div className='cart'>
       <div className="cart-items">
@@ -20,25 +20,23 @@ const Cart = () => {
         </div>
         <br />
         <hr />
-        {
-          food_list.map((item) => {
-            const quantity = cartItem?.[item._id] || 0;
-            if (quantity > 0) {
-              return (
-                <div key={item._id} className="cart-items-title cart-items-item">
-                  <img src={item.image} alt={item.name} /> {/* Added alt text for accessibility */}
-                  <p>{item.name}</p>
-                  <p>${item.price.toFixed(2)}</p> {/* Formatting price */}
-                  <p>{quantity}</p>
-                  <p>${(item.price * quantity).toFixed(2)}</p> {/* Formatting total */}
-                  <p onClick={() => removeFromCart(item._id)} className="cross">X</p>
-                  <hr />
-                </div>
-              );
-            }
-            return null; // Explicitly return null for the else case
-          })
-        }
+        {foodList?.map((item) => { // Use foodList instead of food_list and add optional chaining
+          const quantity = cartItem?.[item._id] || 0;
+          if (quantity > 0) {
+            return (
+              <div key={item._id} className="cart-items-title cart-items-item">
+                <img src={url + '/images/' + item.image} alt={item.name} />
+                <p>{item.name}</p>
+                <p>${item.price.toFixed(2)}</p>
+                <p>{quantity}</p>
+                <p>${(item.price * quantity).toFixed(2)}</p>
+                <p onClick={() => removeFromCart(item._id)} className="cross">X</p>
+                <hr />
+              </div>
+            );
+          }
+          return null;
+        })}
       </div>
       <div className="cart-bottom">
         <div className="cart-total">
@@ -46,17 +44,17 @@ const Cart = () => {
           <div>
             <div className="cart-total-detail">
               <p>Subtotal</p>
-              <p>${getTotalCartAmount()}</p> {/* Formatting subtotal */}
+              <p>${getTotalCartAmount().toFixed(2)}</p> {/* Format subtotal */}
             </div>
             <hr />
             <div className="cart-total-detail">
               <p>Delivery Fee</p>
-              <p>${getTotalCartAmount()===0?0.00:2.00}</p> {/* Formatting delivery fee */}
+              <p>${getTotalCartAmount() === 0 ? 0.00 : 2.00}</p>
             </div>
             <hr />
             <div className="cart-total-detail">
               <b>Total</b>
-              <b>${getTotalCartAmount()===0?0.00:(getTotalCartAmount() + 2).toFixed(2)}</b> {/* Formatting total */}
+              <b>${getTotalCartAmount() === 0 ? 0.00 : (getTotalCartAmount() + 2).toFixed(2)}</b>
             </div>
           </div>
           <button onClick={() => navigate('/order')}>Proceed to checkout</button>
