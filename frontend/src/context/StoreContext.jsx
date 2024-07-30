@@ -1,3 +1,5 @@
+//***********7.28.00 */
+
 import { createContext, useEffect, useState } from "react";
 import axios from "axios"; // Make sure to import axios if you're using it
 
@@ -16,15 +18,18 @@ const StoreContextProvider = (props) => {
     } else {
       setCartItem((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
     }
-    console.log(itemId);
     if(token)
     {
-      await axios.post(url+"/api/cart/add",{itemId},{headers:{token}});
+      await axios.post(url+'/api/cart/add',{id:itemId},{headers:{token}});
     }
-  };
+  }
 
-  const removeFromCart = (itemId) => {
+  const removeFromCart = async (itemId) => {
     setCartItem((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+    if(token)
+    {
+      await axios.post(url+'/api/cart/remove',{id:itemId},{headers:{token}});
+    }
   };
 
   const getTotalCartAmount = () => {
@@ -49,12 +54,18 @@ const StoreContextProvider = (props) => {
     }
   };
 
+  const loadCartData=async(token)=>{
+  const response=await axios.post(url+'/api/cart/get',{},{headers:{token}});
+  setCartItem(response.data.cartData);
+  }
+
   useEffect(() => {
     async function loadData() {
       await fetchFoodList();
       const storedToken = localStorage.getItem("token");
       if (storedToken) {
         setToken(storedToken);
+        await loadCartData(storedToken);
       }
     }
     loadData();
