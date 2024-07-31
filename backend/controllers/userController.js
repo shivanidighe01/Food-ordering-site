@@ -1,95 +1,106 @@
 import userModel from "../models/userModel.js";
-import jwt from 'jsonwebtoken'
-import bycrypt from 'bcrypt'
-import validator from 'validator'
+
+import jwt from "jsonwebtoken";
+import bcrypt from 'bcrypt'
+import validator from 'validator';
+import nodemailer from 'nodemailer'
 
 
-//login
-const loginUser= async(req,res)=>
-    {
-        const {email,password}=req.body;
-        try 
-        {
-            const user=await userModel.findOne({email});
 
-            if(!user)
-            {
-                return res.json({success:false,message:"User does not exist"});
 
-            }
+    // const nodeMailer = require('nodemailer')
 
-            const isMatch=await bycrypt.compare(password,user.password);
+let transportmail = nodemailer.createTransport({
+    service:'gmail',
+    auth:{
+        user:'parthrajput031@gmail.com',
+        pass:'sbwfrwgpncmndvda'
+    }
+})
 
-            if(!isMatch)
-            {
-                res.json({success:false,message:"Invalid credentials"});
+const Sendmail=  (email)=>{
+let mailContent = {
+    from:"parthrajput031@gmail.com",
+    to: `${email}`,
+    subject:'Welcome... Give us chance to end your craving!!!',
+    text:"Order Food From our Restaurent let's wish for a delightful journey with you.Get Different items from our shop at your door step"
+}
 
-            }
+transportmail.sendMail(mailContent,function(err,val){
+    if(err){
+        console.log(err)
+    }else{
+        console.log(val.response,"sent Mail...")
+    }
+})
+}
 
-            const token=createToken(user._id);
-            res.json({success:true,token});
-        } 
-        catch (error) 
-        {
-            console.log(error);
-            res.json({success:false,message:"Error"});
+//login user
+const loginUser = async (req,res)=>{
+    const {email,password}=req.body
+    try{
+        const user = await userModel.findOne({email});
+        if(!user)
+           {
+               return res.json({success:false,message:"User Doesn't exist"})
+           }
+   
+           const isMatch = await bcrypt.compare(password,user.password)
+           if(!isMatch)
+               {
+                   return res.json({success:false,message:"Invalid credentials"})
+               }
+               const token = createToken(user._id)
+
+   Sendmail(email)
+    res.json({success:true,token})
+    }
+     
+ catch(error)
+ {
+    console.log(error)
+    res.json({success:false,message:"Error"})
+ }
         }
-    }
 
-    //create token
-    const createToken=(id)=>
-    {
-        return jwt.sign({id},process.env.JWT_SCREATE)
-    }
-//register
 
-const registerUser=async(req,res)=>
+const createToken =(id)=>{
+    return jwt.sign({id},process.env.JWT_SECRET)
+}
+
+const registerUser = async(req,res)=>{
+    const{name,password,email}=req.body;
+    try{
+       const exists = await userModel.findOne({email});
+       if(exists)
+       {
+        return res.json({success:false,message:"user already exists"})
+       }
+       if(!validator.isEmail(email))
 {
-    const {name,password,email}=req.body;
+   return res.json({success:false,message:"please enter a valid email"})
+}  
+if(password.length<8)
+   {
+       return res.json({success:false,message:"Please enter a strong password"})
+   }
 
-    try 
-    {
-
-        //if user already exists
-        const exists=await userModel.findOne({email});
-        if(exists)
-        {
-            return res.json({success:false,message:"user already exists"});
-
-        }
-        //validate email format and strong password
-        if(!validator.isEmail(email))
-        {
-           return res.json({success:false,message:"Please enter valid email"});
-        }
-
-        if(password.length<8)
-        {
-            return res.json({success:false,message:"Password should be min 8 character"});
-        }
-
-        //hashing user password
-        const salt=await bycrypt.genSalt(10);
-        const hashedPassword=await bycrypt.hash(password,salt);
-
-
-        const newUser=new userModel(
-            {
-                name:name,
-                email:email,
-                password:hashedPassword
-            }
-        )
-        const user=await newUser.save()
-        const token=createToken(user._id)
-        res.json({success:true,token});
-    } 
-    
-    catch (error) 
-    {
-        console.log(error);
-        res.json({success:false,message:"Error"});
+   const salt = await bcrypt.genSalt(10)
+   const hashedPassword = await bcrypt.hash(password,salt);
+ const newUser = new userModel({
+   name:name,
+   email:email,
+   password:hashedPassword,
+ })
+ 
+ const user = await newUser.save()
+const token = createToken(user._id) 
+ res.json({success:true,token})
+}
+    catch(error){
+console.log(error)
+res.json({success:false,message:"error"})
     }
 }
 
-export {loginUser,registerUser};
+export  {loginUser,registerUser}

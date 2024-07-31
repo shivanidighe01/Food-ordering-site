@@ -6,7 +6,12 @@ import userRouter from './routes/userRoute.js'
 import 'dotenv/config.js'
 import cartRouter from './routes/cartRoute.js'
 import { placeOrder } from './controllers/orderController.js'
+import EventEmitter from 'events'
 
+
+// const EventEmitter = require('events');
+const emitter = new EventEmitter();
+emitter.setMaxListeners(20); // Set a higher limit if necessary
 //app config
 const app=express()
 const port=4000
